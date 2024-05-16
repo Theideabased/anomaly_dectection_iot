@@ -1,21 +1,24 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from io import BytesIO
 import pandas as pd
-import joblib  # Assuming you're using joblib for the pickled model
+import joblib  
 
-# Load the pickled model (replace with your filename and path)
+# Load the pickled model
 model = joblib.load("model/my_model.pkl")
 
 app = FastAPI()
 
+@app.get("/")
+async def root():
+    return {"message": "the anomalies dectection app"}
 
 async def process_csv(csv_file: UploadFile = File(...)):
     # Read the uploaded CSV file
     try:
-        if hasattr(csv_file, 'file'):  # Check for 'file' attribute
-            data = pd.read_csv(csv_file.file)  # Use 'file' for direct reading
+        if hasattr(csv_file, 'file'):
+            data = pd.read_csv(csv_file.file)
         else:
-            content = await csv_file.read()  # Await for bytes content (within async function)
+            content = await csv_file.read() 
             data = pd.read_csv(BytesIO(content))
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error reading CSV file: {str(e)}")
