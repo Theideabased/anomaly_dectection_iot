@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from io import BytesIO
 import pandas as pd
 import joblib  
@@ -7,6 +8,23 @@ import joblib
 model = joblib.load("model/my_model.pkl")
 
 app = FastAPI()
+
+origins = [
+    "https://localhost.tiangolo.com",
+    "http://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080"
+    "http://localhost:5173"
+    "https://localhost:5173"
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+
+)
 
 @app.get("/")
 async def root():
