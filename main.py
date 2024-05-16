@@ -5,18 +5,11 @@ import pandas as pd
 import joblib  
 
 # Load the pickled model
-model = joblib.load("model/my_model.pkl")
+model = joblib.load("model/model.pkl")
 
 app = FastAPI()
 
-origins = [
-    "https://localhost.tiangolo.com",
-    "http://localhost.tiangolo.com",
-    "http://localhost",
-    "http://localhost:8080",
-    "http://localhost:5173",
-    "https://localhost:5173",
-]
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -46,7 +39,7 @@ async def process_csv(csv_file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="CSV file is missing the 'source' column")
 
     # Extract the source column for predictions
-    source_data = data["Destination"]
+    source_data = data["Protocol"]
 
     # Make predictions using the loaded model
     predictions = model.predict(source_data)
