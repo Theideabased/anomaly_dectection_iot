@@ -35,11 +35,12 @@ async def process_csv(csv_file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail=f"Error reading CSV file: {str(e)}")
 
     # Check if "source" column exists
-    if "Destination" not in data.columns:
-        raise HTTPException(status_code=400, detail="CSV file is missing the 'source' column")
+    if "Protocol" not in data.columns:
+        raise HTTPException(status_code=400, detail="CSV file is missing the 'Protocol' column")
 
-    # Extract the source column for predictions
-    source_data = data["Protocol"]
+    # Removing the null and extract the source column for predictions
+    clean_data = data.dropna()
+    source_data = clean_data["Protocol"]
 
     # Make predictions using the loaded model
     predictions = model.predict(source_data)
